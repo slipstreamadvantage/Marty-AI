@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: marty-ai
+    runtime: python
+    repo: https://github.com/slipstreamadvantage/Marty-AI
+    branch: main
+    region: singapore
+    plan: 0.5c-512mb
+    numInstances: 1
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: marty-postgres
+          property: connectionString
+
+databases:
+  - name: marty-postgres
+    plan: 0.1c-256mb
+    region: singapore
+    postgresMajorVersion: "17"
+    databaseName: marty_postgres_s4kh
+    user: marty_postgres_s4kh_user
+    diskSizeGB: 1
+    ipAllowList: []
